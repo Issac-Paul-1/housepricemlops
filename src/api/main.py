@@ -4,7 +4,6 @@ from inference import predict_price, batch_predict
 from schemas import HousePredictionRequest, PredictionResponse
 from prometheus_fastapi_instrumentator import Instrumentator
 
-
 # Initialize FastAPI app with metadata
 app = FastAPI(
     title="House Price Prediction API",
@@ -34,7 +33,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-Instrumentator.instrument(app).expose(app)
+# ✅ Fix Prometheus Instrumentation
+instrumentator = Instrumentator()
+instrumentator.instrument(app)  # pass app instance
+instrumentator.expose(app)
 
 # Health check endpoint
 @app.get("/health", response_model=dict)
